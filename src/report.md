@@ -133,7 +133,6 @@
 - С помощью команды ip a посмотреть существующие сетевые интерфейсы:
 
 `ip a` <br>
-
 <img src="../misc/images/13.jpg" alt="13" />
 
 > ***lo (Loopback):*** <br>
@@ -156,12 +155,10 @@
 
 - Открыть файл конфигурации сетевых интерфейсов и внести необходимые изменения: <br>
 `sudo vim /etc/netplan/00-installer-config.yaml` <br>
-
 <img src="../misc/images/14.jpg" alt="14" />
 
 - Выполнить команду netplan apply для перезапуска сервиса сети: <br>
 `sudo netplan apply` <br>
-
 <img src="../misc/images/15.jpg" alt="15" />
 
 ### 2.1. Добавление статического маршрута вручную
@@ -173,7 +170,6 @@
 - Пропинговать соединение между машинами: <br>
 **ws1:** `ping 172.24.116.8` <br>
 **ws2:** `ping 192.168.100.10` <br>
-
 <img src="../misc/images/16.jpg" alt="16" />
 
 ### 2.2. Добавление статического маршрута с сохранением
@@ -182,13 +178,11 @@
 
 - Добавить статический маршрут от одной машины до другой с помощью файла etc/netplan/00-installer-config.yaml: <br>
 `sudo vim /etc/netplan/00-installer-config.yaml` <br>
-
 <img src="../misc/images/17.jpg" alt="17" />
 
 - Пропинговать соединение между машинами: <br>
 **ws1:** `ping -c 3 172.24.116.8` <br>
 **ws2:** `ping -c 3 192.168.100.10` <br>
-
 <img src="../misc/images/18.jpg" alt="18" />
 
 ## Part 3. Утилита iperf3
@@ -205,7 +199,6 @@
 - Измерить скорость соединения между ws1 и ws2: <br>
 **ws1:** `iperf3 -s -f K` <br>
 **ws2:** `iperf3 -c 192.168.100.10 -f K` <br>
-
 <img src="../misc/images/19.jpg" alt="19" />
 
 ## Part 4. Сетевой экран
@@ -221,9 +214,7 @@
 5. разрешить echo reply (машина должна "пинговаться") <br>
 
 - Содержимое файла /etc/firewall для машины ws1: <br>
-
 <img src="../misc/images/20.jpg" alt="20" />
 
 - Содержимое файла /etc/firewall для машины ws2: <br>
-
 <img src="../misc/images/21.jpg" alt="21" />
