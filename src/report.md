@@ -19,7 +19,8 @@
    4.1. [Утилита iptables](#41-утилита-iptables) <br>
    4.2. [Утилита nmap](#42-утилита-nmap)
 5. [Part 5. Статическая маршрутизация сети](#part-5-статическая-маршрутизация-сети) <br>
-   5.1. [Настройка адресов машин](#51-настройка-адресов-машин)
+   5.1. [Настройка адресов машин](#51-настройка-адресов-машин) <br>
+   5.2. [Включение переадресации IP-адресов](#52-включение-переадресации-ip-адресов) <br>
 
 ## Part 1. Инструмент ipcalc
 - Установка утилиты ipcalc <br>
@@ -244,13 +245,6 @@
 **ws2:** `sudo vim /etc/firewall.sh` <br>
 <img src="../misc/images/20_1.jpg" alt="20_1" />
 
-- Запустить файлы на обеих машинах: <br>
-
-**ws1:** `chmod +x /etc/firewall.sh` , `/etc/firewall.sh` <br>
-<img src="../misc/images/21.jpg" alt="21" /> <br>
-**ws2:** `chmod +x /etc/firewall.sh` , `/etc/firewall.sh` <br>
-<img src="../misc/images/21_1.jpg" alt="21_1" />
-
 >**iptables -F:** <br>
 Очищает все правила в таблице фильтрации (Filter table) iptables. Это означает, что все текущие настройки брандмауэра будут удалены, и трафик будет разрешен по умолчанию. <br>
 **iptables -X:** <br>
@@ -263,6 +257,13 @@
 Добавляет другое правило в цепочку OUTPUT, но оно разрешает исходящий ICMP-трафик с типом "echo-reply" и направляет его на цель ACCEPT, что означает разрешение такого трафика. <br>
 **/sbin/iptables-save:** <br>
 Сохраняет текущие настройки брандмауэра iptables в файле (обычно в /etc/sysconfig/iptables или /etc/iptables/rules.v4). Это позволяет сохранить настройки, чтобы они автоматически применялись при перезагрузке системы или после очистки правил. <br>
+
+- Запустить файлы на обеих машинах: <br>
+
+**ws1:** `chmod +x /etc/firewall.sh` , `/etc/firewall.sh` <br>
+<img src="../misc/images/21.jpg" alt="21" /> <br>
+**ws2:** `chmod +x /etc/firewall.sh` , `/etc/firewall.sh` <br>
+<img src="../misc/images/21_1.jpg" alt="21_1" />
 
 ### 4.2. Утилита nmap
 
@@ -288,3 +289,38 @@
 
 <img src="../misc/images/24.jpg" alt="24" />
 
+- Содержимое etc/netplan/00-installer-config.yaml для машин
+
+**ws11:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
+<img src="../misc/images/25_1.jpg" alt="25_1" /> <br>
+**ws21:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
+<img src="../misc/images/25_2.jpg" alt="25_2" /> <br>
+**ws22:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
+<img src="../misc/images/25_3.jpg" alt="25_3" /> <br>
+**r1:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
+<img src="../misc/images/25_4.jpg" alt="25_4" /> <br>
+**r2:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
+<img src="../misc/images/25_5.jpg" alt="25_5" /> <br>
+
+- Перезапустить сервис сети. Если ошибок нет, то командой `ip -4` a проверить, что адрес машины задан верно:
+
+**ws11:** `ip -4 a` <br>
+<img src="../misc/images/26_1.jpg" alt="26_1" /> <br>
+**ws21:** `ip -4 a` <br>
+<img src="../misc/images/26_2.jpg" alt="26_2" /> <br>
+**ws22:** `ip -4 a` <br>
+<img src="../misc/images/26_3.jpg" alt="26_3" /> <br>
+**r1:** `ip -4 a` <br>
+<img src="../misc/images/26_4.jpg" alt="26_4" /> <br>
+**r2:** `ip -4 a` <br>
+<img src="../misc/images/26_5.jpg" alt="26_5" /> <br>
+
+- Пропинговать ws22 с ws21:
+
+<img src="../misc/images/27.jpg" alt="27" /> <br>
+
+- Аналогично пропинговать r1 с ws11:
+
+<img src="../misc/images/28.jpg" alt="28" /> <br>
+
+### 5.2. Включение переадресации IP-адресов
