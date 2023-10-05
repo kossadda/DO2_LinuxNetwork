@@ -25,6 +25,7 @@
    5.4. [Добавление статических маршрутов](#54-добавление-статических-маршрутов) <br>
    5.5. [Построение списка маршрутизаторов](#55-построение-списка-маршрутизаторов) <br>
    5.6. [Использование протокола ICMP при маршрутизации](#56-использование-протокола-icmp-при-маршрутизации)
+6. [Part 6. Динамическая настройка IP с помощью DHCP](#part-6-динамическая-настройка-ip-с-помощью-dhcp) <br>
 
 ## Part 1. Инструмент ipcalc
 
@@ -436,7 +437,46 @@
 
 ## Part 6. Динамическая настройка IP с помощью DHCP
 
-**Для r2 настроить в файле `/etc/dhcp/dhcpd.conf` конфигурацию службы DHCP**
+**Для r2 настроить в файле `/etc/dhcp/dhcpd.conf` конфигурацию службы DHCP.**
 
-- Указать адрес маршрутизатора по-умолчанию, DNS-сервер и адрес внутренней сети:
+**1) Указать адрес маршрутизатора по-умолчанию, DNS-сервер и адрес внутренней сети:**
 
+**r2:** `sudo vim /etc/dhcp/dhcpd.conf` <br>
+<img src="../misc/images/41.jpg" alt="41" /> <br>
+
+**2) В файле resolv.conf прописать nameserver 8.8.8.8:**
+
+**r2:** `sudo vim /etc/resolv.conf` <br>
+<img src="../misc/images/42.jpg" alt="42" /> <br>
+
+**Перезагрузить службу DHCP командой `systemctl restart isc-dhcp-server`. Машину ws21 перезагрузить при помощи reboot и через `ip a` показать, что она получила адрес. Также пропинговать ws22 с ws21.**
+
+- Перезагрузить службу DHCP командой `systemctl restart isc-dhcp-server`:
+
+**r2:** `systemctl restart isc-dhcp-server` <br>
+<img src="../misc/images/43.jpg" alt="43" /> <br>
+
+- Внести изменения в `/etc/netplan/00-installer-config.yaml` на машинах ws21 и ws22:
+
+**ws21:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
+<img src="../misc/images/44.jpg" alt="44" /> <br>
+**ws22:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
+<img src="../misc/images/45.jpg" alt="45" /> <br>
+
+- Принять изменения:
+
+`sudo netplan apply` <br>
+
+- Перезагрузить виртуальные машины ws21 и ws22:
+
+`reboot` <br>
+
+- Отобразить получение адреса виртуальной машиной ws21 через `ip a`:
+
+**ws21:** `ip a` <br>
+<img src="../misc/images/46.jpg" alt="46" /> <br>
+
+- Пропинговать ws22 с ws21:
+
+**ws21:** `ping -c 5 10.20.0.20` <br>
+<img src="../misc/images/47.jpg" alt="47" /> <br>
