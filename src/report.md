@@ -21,9 +21,13 @@
 5. [Part 5. Статическая маршрутизация сети](#part-5-статическая-маршрутизация-сети) <br>
    5.1. [Настройка адресов машин](#51-настройка-адресов-машин) <br>
    5.2. [Включение переадресации IP-адресов](#52-включение-переадресации-ip-адресов) <br>
+   5.3. [Установка маршрута по-умолчанию](#53-установка-маршрута-по-умолчанию) <br>
+   5.4. [Добавление статических маршрутов](#54-добавление-статических-маршрутов) <br>
 
 ## Part 1. Инструмент ipcalc
+
 - Установка утилиты ipcalc <br>
+
 `sudo apt install ipcalc` <br>
 <img src="../misc/images/1.jpg" alt="1" /> <br>
 
@@ -138,7 +142,7 @@
 
 **Поднять две виртуальные машины (далее -- ws1 и ws2)**
 
-- С помощью команды ip a посмотреть существующие сетевые интерфейсы:
+- С помощью команды `ip a` посмотреть существующие сетевые интерфейсы:
 
 **ws1:** `ip a` <br>
 <img src="../misc/images/13.jpg" alt="13" /> <br>
@@ -170,7 +174,7 @@
 **ws2:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/14_1.jpg" alt="14_1" />
 
-- Выполнить команду netplan apply для перезапуска сервиса сети: <br>
+- Выполнить команду `netplan apply` для перезапуска сервиса сети: <br>
 
 **ws1:** `sudo netplan apply` <br>
 <img src="../misc/images/15.jpg" alt="15" /> <br>
@@ -179,7 +183,7 @@
 
 ### 2.1. Добавление статического маршрута вручную
 
-- Добавить статический маршрут от одной машины до другой и обратно при помощи команды вида ip r add: <br>
+- Добавить статический маршрут от одной машины до другой и обратно при помощи команды вида `ip r add`: <br>
 
 **ws1:** `sudo ip r add 172.24.116.8 dev enp0s3` <br>
 **ws2:** `sudo ip r add 192.168.100.10 dev enp0s3` <br>
@@ -195,7 +199,7 @@
 
 - Перезапустить машины
 
-- Добавить статический маршрут от одной машины до другой с помощью файла etc/netplan/00-installer-config.yaml: <br>
+- Добавить статический маршрут от одной машины до другой с помощью файла `etc/netplan/00-installer-config.yaml`: <br>
 
 **ws1:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/17.jpg" alt="17" /> <br>
@@ -231,7 +235,7 @@
 
 ### 4.1. Утилита iptables
 
-- Создать файл /etc/firewall.sh, имитирующий фаерволл, на ws1 и ws2: <br>
+- Создать файл `/etc/firewall.sh`, имитирующий фаерволл, на ws1 и ws2: <br>
 
 **Нужно добавить в файл подряд следующие правила:** <br>
 1. на ws1 применить стратегию когда в начале пишется запрещающее правило, а в конце пишется разрешающее правило (это касается пунктов 4 и 5) <br>
@@ -287,11 +291,11 @@
 
 ### 5.1. Настройка адресов машин
 
-- Настроить конфигурации машин в etc/netplan/00-installer-config.yaml согласно сети на рисунке:
+- Настроить конфигурации машин в `etc/netplan/00-installer-config.yaml` согласно сети на рисунке:
 
 <img src="../misc/images/24.jpg" alt="24" />
 
-- Содержимое etc/netplan/00-installer-config.yaml для машин
+- Содержимое `etc/netplan/00-installer-config.yaml` для машин
 
 **ws11:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/25_1.jpg" alt="25_1" /> <br>
@@ -326,3 +330,48 @@
 <img src="../misc/images/28.jpg" alt="28" /> <br>
 
 ### 5.2. Включение переадресации IP-адресов
+
+- Для включения переадресации IP, выполнить команду на роутерах:
+
+**r1:** `sysctl -w net.ipv4.ip_forward=1` <br>
+<img src="../misc/images/29_1.jpg" alt="29_1" /> <br>
+**r2:** `sysctl -w net.ipv4.ip_forward=1` <br>
+<img src="../misc/images/29_2.jpg" alt="29_2" /> <br>
+
+- Открыть файл `/etc/sysctl.conf` на обоих роутерах и добавить в него следующую строку:
+
+<img src="../misc/images/30.jpg" alt="30" /> <br>
+
+### 5.3. Установка маршрута по-умолчанию
+
+**Настроить маршрут по-умолчанию (шлюз) для рабочих станций. Для этого добавить default перед IP роутера в файле конфигураций**
+
+- Содержимое `etc/netplan/00-installer-config.yaml` для машин:
+
+**ws11:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
+<img src="../misc/images/31_1.jpg" alt="31_1" /> <br>
+**ws21:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
+<img src="../misc/images/31_2.jpg" alt="31_2" /> <br>
+**ws22:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
+<img src="../misc/images/31_3.jpg" alt="31_3" /> <br>
+
+`sudo netplan apply` <br>
+
+- Вызвать `ip r` и показать, что добавился маршрут в таблицу маршрутизации:
+
+**ws11:** `ip r` <br>
+<img src="../misc/images/32_1.jpg" alt="32_1" /> <br>
+**ws21:** `ip r` <br>
+<img src="../misc/images/32_2.jpg" alt="32_2" /> <br>
+**ws22:** `ip r` <br>
+<img src="../misc/images/32_3.jpg" alt="32_3" /> <br>
+
+- Пропинговать с ws11 роутер r2 и показать на r2, что пинг доходит. Для этого использовать команду `tcpdump -tn -i eth1`:
+
+**ws11:** `ping -c 5 10.100.0.12` <br>
+<img src="../misc/images/33_1.jpg" alt="33_1" /> <br>
+**ws21:** `sudo tcpdmp -tn -i enp0s8` <br>
+<img src="../misc/images/33_2.jpg" alt="33_2" /> <br>
+
+### 5.4. Добавление статических маршрутов
+
