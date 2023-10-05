@@ -323,10 +323,12 @@
 
 - Пропинговать ws22 с ws21:
 
+**ws21:** `ping 10.20.0.20` <br>
 <img src="../misc/images/27.jpg" alt="27" /> <br>
 
 - Аналогично пропинговать r1 с ws11:
 
+**r1:** `ping 10.10.0.1` <br>
 <img src="../misc/images/28.jpg" alt="28" /> <br>
 
 ### 5.2. Включение переадресации IP-адресов
@@ -338,7 +340,7 @@
 **r2:** `sysctl -w net.ipv4.ip_forward=1` <br>
 <img src="../misc/images/29_2.jpg" alt="29_2" /> <br>
 
-- Открыть файл `/etc/sysctl.conf` на обоих роутерах и добавить в него следующую строку:
+- Открыть файл `/etc/sysctl.conf` на обоих роутерах и добавить в него следующую строку `net.ipv4.ip_forward = `:
 
 <img src="../misc/images/30.jpg" alt="30" /> <br>
 
