@@ -161,9 +161,10 @@
 Описать сетевой интерфейс, соответствующий внутренней сети, на обеих машинах и задать следующие адреса и маски: ws1 - 192.168.100.10, маска /16, ws2 - 172.24.116.8, маска /12
 
 - Открыть файл конфигурации сетевых интерфейсов и внести необходимые изменения: <br>
+
 **ws1:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/14.jpg" alt="14" /> <br>
-**ws2:** `sudo vim /etc/netplan/00-installer-config.yaml`
+**ws2:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/14_1.jpg" alt="14_1" />
 
 - Выполнить команду netplan apply для перезапуска сервиса сети: <br>
