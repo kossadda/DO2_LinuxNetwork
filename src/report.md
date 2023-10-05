@@ -137,10 +137,9 @@
 
 - С помощью команды ip a посмотреть существующие сетевые интерфейсы:
 
-`ip a` <br>
-**ws1:** <br>
+**ws1:** `ip a` <br>
 <img src="../misc/images/13.jpg" alt="13" /> <br>
-**ws2:** <br>
+**ws2:** `ip a` <br>
 <img src="../misc/images/13_1.jpg" alt="13_1" />
 
 > ***lo (Loopback):*** <br>
@@ -162,17 +161,15 @@
 Описать сетевой интерфейс, соответствующий внутренней сети, на обеих машинах и задать следующие адреса и маски: ws1 - 192.168.100.10, маска /16, ws2 - 172.24.116.8, маска /12
 
 - Открыть файл конфигурации сетевых интерфейсов и внести необходимые изменения: <br>
-`sudo vim /etc/netplan/00-installer-config.yaml` <br>
-**ws1:** <br>
+**ws1:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/14.jpg" alt="14" /> <br>
-**ws2:** <br>
+**ws2:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/14_1.jpg" alt="14_1" />
 
 - Выполнить команду netplan apply для перезапуска сервиса сети: <br>
-`sudo netplan apply` <br>
-**ws1:** <br>
+**ws1:** `sudo netplan apply` <br>
 <img src="../misc/images/15.jpg" alt="15" /> <br>
-**ws2:** <br>
+**ws2:** `sudo netplan apply` <br>
 <img src="../misc/images/15_1.jpg" alt="15_1" />
 
 ### 2.1. Добавление статического маршрута вручную
@@ -192,10 +189,9 @@
 - Перезапустить машины
 
 - Добавить статический маршрут от одной машины до другой с помощью файла etc/netplan/00-installer-config.yaml: <br>
-`sudo vim /etc/netplan/00-installer-config.yaml` <br>
-**ws1:** <br>
+**ws1:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/17.jpg" alt="17" /> <br>
-**ws2:** <br>
+**ws2:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/17_1.jpg" alt="17_1" />
 
 - Пропинговать соединение между машинами: <br>
@@ -242,11 +238,9 @@
 <img src="../misc/images/20_1.jpg" alt="20_1" />
 
 - Запустить файлы на обеих машинах: <br>
-`chmod +x /etc/firewall.sh` <br>
-`/etc/firewall.sh` <br>
-**ws1:** <br>
+**ws1:** `chmod +x /etc/firewall.sh` , `/etc/firewall.sh` <br>
 <img src="../misc/images/21.jpg" alt="21" /> <br>
-**ws2:** <br>
+**ws2:** `chmod +x /etc/firewall.sh` , `/etc/firewall.sh` <br>
 <img src="../misc/images/21_1.jpg" alt="21_1" />
 
 >**iptables -F:** <br>
