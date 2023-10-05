@@ -26,6 +26,7 @@
    5.5. [Построение списка маршрутизаторов](#55-построение-списка-маршрутизаторов) <br>
    5.6. [Использование протокола ICMP при маршрутизации](#56-использование-протокола-icmp-при-маршрутизации)
 6. [Part 6. Динамическая настройка IP с помощью DHCP](#part-6-динамическая-настройка-ip-с-помощью-dhcp) <br>
+7. [Part 7. NAT](#part-7-nat) <br>
 
 ## Part 1. Инструмент ipcalc
 
@@ -439,6 +440,10 @@
 
 **Для r2 настроить в файле `/etc/dhcp/dhcpd.conf` конфигурацию службы DHCP.**
 
+- Установить утилиту:
+
+`sudo apt-get install isc-dhcp-server` <br>
+
 **1) Указать адрес маршрутизатора по-умолчанию, DNS-сервер и адрес внутренней сети:**
 
 **r2:** `sudo vim /etc/dhcp/dhcpd.conf` <br>
@@ -480,3 +485,72 @@
 
 **ws21:** `ping -c 5 10.20.0.20` <br>
 <img src="../misc/images/47.jpg" alt="47" /> <br>
+
+**Указать MAC адрес у ws11, для этого в `etc/netplan/00-installer-config.yaml` надо добавить строки: `macaddress: 10:10:10:10:10:BA, dhcp4: true`**
+
+- Внести изменения в `/etc/netplan/00-installer-config.yaml`:
+
+**ws11:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
+<img src="../misc/images/48.jpg" alt="48" /> <br>
+
+`sudo netplan apply` <br>
+
+- Отключить машину и прописать изменение MAC адреса в настройках ws11 в VirtualBox:
+
+<img src="../misc/images/49.jpg" alt="49" /> <br>
+
+**Для r1 настроить аналогично r2, но сделать выдачу адресов с жесткой привязкой к MAC-адресу (ws11). Провести аналогичные тесты.**
+
+- Установить утилиту:
+
+`sudo apt-get install isc-dhcp-server` <br>
+
+**1) Указать адрес маршрутизатора по-умолчанию, DNS-сервер и адрес внутренней сети:**
+
+**r1:** `sudo vim /etc/dhcp/dhcpd.conf` <br>
+<img src="../misc/images/50.jpg" alt="50" /> <br>
+
+**2) В файле resolv.conf прописать nameserver 8.8.8.8:**
+
+**r1:** `sudo vim /etc/resolv.conf` <br>
+<img src="../misc/images/51.jpg" alt="51" /> <br>
+
+- Перезагрузить службу DHCP командой `systemctl restart isc-dhcp-server`:
+
+**r1:** `systemctl restart isc-dhcp-server` <br>
+<img src="../misc/images/52.jpg" alt="52" /> <br>
+
+- Перезагрузить виртуальную машину ws11:
+
+`reboot` <br>
+
+- Отобразить получение адреса виртуальной машиной ws11 через `ip a`:
+
+**ws11:** `ip a` <br>
+<img src="../misc/images/53.jpg" alt="53" /> <br>
+
+- Пропинговать ws22 с ws21:
+
+**ws11:** `ping -c 5 10.10.0.2` <br>
+<img src="../misc/images/54.jpg" alt="54" /> <br>
+
+**Запросить с ws21 обновление ip адреса.**
+
+- Вывод команды `ip a` до обновления:
+
+**ws21:** `ip a` <br>
+<img src="../misc/images/55_1.jpg" alt="55_1" /> <br>
+
+- Вывод команды `ip a` после обновления:
+
+**ws21:** `sudo dhclient -r enp0s8` <br>
+`sudo dhclient -r enp0s8` <br>
+`ip a` <br>
+<img src="../misc/images/55_2.jpg" alt="55_2" /> <br>
+
+- В отчёте описать, какими опциями DHCP сервера пользовались в данном пункте:
+
+> sudo dhclient -r enp0s8 (-r необходим для освобождения IP-адреса) <br>
+sudo dhclient enp0s8
+
+## Part 7. NAT
