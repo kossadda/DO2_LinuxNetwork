@@ -19,6 +19,7 @@
    4.1. [Утилита iptables](#41-утилита-iptables) <br>
    4.2. [Утилита nmap](#42-утилита-nmap)
 5. [Part 5. Статическая маршрутизация сети](#part-5-статическая-маршрутизация-сети) <br>
+   5.1. [Настройка адресов машин](#51-настройка-адресов-машин)
 
 ## Part 1. Инструмент ipcalc
 - Установка утилиты ipcalc <br>
@@ -137,7 +138,10 @@
 - С помощью команды ip a посмотреть существующие сетевые интерфейсы:
 
 `ip a` <br>
-<img src="../misc/images/13.jpg" alt="13" />
+**ws1:** <br>
+<img src="../misc/images/13.jpg" alt="13" /> <br>
+**ws2:** <br>
+<img src="../misc/images/13_1.jpg" alt="13_1" />
 
 > ***lo (Loopback):*** <br>
 ***Тип:*** Локальный сетевой интерфейс. <br>
@@ -159,11 +163,17 @@
 
 - Открыть файл конфигурации сетевых интерфейсов и внести необходимые изменения: <br>
 `sudo vim /etc/netplan/00-installer-config.yaml` <br>
-<img src="../misc/images/14.jpg" alt="14" />
+**ws1:** <br>
+<img src="../misc/images/14.jpg" alt="14" /> <br>
+**ws2:** <br>
+<img src="../misc/images/14_1.jpg" alt="14_1" />
 
 - Выполнить команду netplan apply для перезапуска сервиса сети: <br>
 `sudo netplan apply` <br>
-<img src="../misc/images/15.jpg" alt="15" />
+**ws1:** <br>
+<img src="../misc/images/15.jpg" alt="15" /> <br>
+**ws2:** <br>
+<img src="../misc/images/15_1.jpg" alt="15_1" />
 
 ### 2.1. Добавление статического маршрута вручную
 
@@ -173,8 +183,9 @@
 
 - Пропинговать соединение между машинами: <br>
 **ws1:** `ping 172.24.116.8` <br>
+<img src="../misc/images/16.jpg" alt="16" /> <br>
 **ws2:** `ping 192.168.100.10` <br>
-<img src="../misc/images/16.jpg" alt="16" />
+<img src="../misc/images/16_1.jpg" alt="16_1" />
 
 ### 2.2. Добавление статического маршрута с сохранением
 
@@ -182,12 +193,16 @@
 
 - Добавить статический маршрут от одной машины до другой с помощью файла etc/netplan/00-installer-config.yaml: <br>
 `sudo vim /etc/netplan/00-installer-config.yaml` <br>
-<img src="../misc/images/17.jpg" alt="17" />
+**ws1:** <br>
+<img src="../misc/images/17.jpg" alt="17" /> <br>
+**ws2:** <br>
+<img src="../misc/images/17_1.jpg" alt="17_1" />
 
 - Пропинговать соединение между машинами: <br>
 **ws1:** `ping -c 3 172.24.116.8` <br>
+<img src="../misc/images/18.jpg" alt="18" /> <br>
 **ws2:** `ping -c 3 192.168.100.10` <br>
-<img src="../misc/images/18.jpg" alt="18" />
+<img src="../misc/images/18_1.jpg" alt="18_1" />
 
 ## Part 3. Утилита iperf3
 
@@ -202,8 +217,9 @@
 
 - Измерить скорость соединения между ws1 и ws2: <br>
 **ws1:** `iperf3 -s -f K` <br>
+<img src="../misc/images/19.jpg" alt="19" /> <br>
 **ws2:** `iperf3 -c 192.168.100.10 -f K` <br>
-<img src="../misc/images/19.jpg" alt="19" />
+<img src="../misc/images/19_1.jpg" alt="19_1" />
 
 ## Part 4. Сетевой экран
 
@@ -220,12 +236,18 @@
 5. разрешить echo reply (машина должна "пинговаться") <br>
 
 - Содержимое файла /etc/firewall для машины ws1 и ws2: <br>
-<img src="../misc/images/20.jpg" alt="20" />
+**ws1:** <br>
+<img src="../misc/images/20.jpg" alt="20" /> <br>
+**ws2:** <br>
+<img src="../misc/images/20_1.jpg" alt="20_1" />
 
 - Запустить файлы на обеих машинах: <br>
 `chmod +x /etc/firewall.sh` <br>
 `/etc/firewall.sh` <br>
-<img src="../misc/images/21.jpg" alt="21" />
+**ws1:** <br>
+<img src="../misc/images/21.jpg" alt="21" /> <br>
+**ws2:** <br>
+<img src="../misc/images/21_1.jpg" alt="21_1" />
 
 >**iptables -F:** <br>
 Очищает все правила в таблице фильтрации (Filter table) iptables. Это означает, что все текущие настройки брандмауэра будут удалены, и трафик будет разрешен по умолчанию. <br>
@@ -246,11 +268,21 @@
 
 > Проверка: в выводе nmap должно быть сказано: **Host is up**
 
-`ping 172.24.116.8` <br>
-`ping 192.168.100.10` <br>
-<img src="../misc/images/22.jpg" alt="22" />
+**ws1:** `ping 172.24.116.8` <br>
+<img src="../misc/images/22.jpg" alt="22" /> <br>
+**ws2:** `ping 192.168.100.10` <br>
+<img src="../misc/images/22_1.jpg" alt="22_1" />
 
 `nmap -Pn 192.168.100.10` <br>
 <img src="../misc/images/23.jpg" alt="23" />
 
 ## Part 5. Статическая маршрутизация сети
+
+**Поднять пять виртуальных машин (3 рабочие станции (ws11, ws21, ws22) и 2 роутера (r1, r2)):** <br>
+
+### 5.1. Настройка адресов машин
+
+- Настроить конфигурации машин в etc/netplan/00-installer-config.yaml согласно сети на рисунке:
+
+<img src="../misc/images/24.jpg" alt="24" />
+
