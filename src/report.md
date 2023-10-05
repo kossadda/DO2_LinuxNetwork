@@ -163,7 +163,7 @@
 - Открыть файл конфигурации сетевых интерфейсов и внести необходимые изменения: <br>
 **ws1:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/14.jpg" alt="14" /> <br>
-**ws2:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
+**ws2:** `sudo vim /etc/netplan/00-installer-config.yaml`
 <img src="../misc/images/14_1.jpg" alt="14_1" />
 
 - Выполнить команду netplan apply для перезапуска сервиса сети: <br>
