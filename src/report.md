@@ -168,6 +168,7 @@
 <img src="../misc/images/14_1.jpg" alt="14_1" />
 
 - Выполнить команду netplan apply для перезапуска сервиса сети: <br>
+
 **ws1:** `sudo netplan apply` <br>
 <img src="../misc/images/15.jpg" alt="15" /> <br>
 **ws2:** `sudo netplan apply` <br>
@@ -176,10 +177,12 @@
 ### 2.1. Добавление статического маршрута вручную
 
 - Добавить статический маршрут от одной машины до другой и обратно при помощи команды вида ip r add: <br>
+
 **ws1:** `sudo ip r add 172.24.116.8 dev enp0s3` <br>
 **ws2:** `sudo ip r add 192.168.100.10 dev enp0s3` <br>
 
 - Пропинговать соединение между машинами: <br>
+
 **ws1:** `ping 172.24.116.8` <br>
 <img src="../misc/images/16.jpg" alt="16" /> <br>
 **ws2:** `ping 192.168.100.10` <br>
@@ -190,12 +193,14 @@
 - Перезапустить машины
 
 - Добавить статический маршрут от одной машины до другой с помощью файла etc/netplan/00-installer-config.yaml: <br>
+
 **ws1:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/17.jpg" alt="17" /> <br>
 **ws2:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/17_1.jpg" alt="17_1" />
 
 - Пропинговать соединение между машинами: <br>
+
 **ws1:** `ping -c 3 172.24.116.8` <br>
 <img src="../misc/images/18.jpg" alt="18" /> <br>
 **ws2:** `ping -c 3 192.168.100.10` <br>
@@ -213,6 +218,7 @@
 ### 3.2. Утилита iperf3:
 
 - Измерить скорость соединения между ws1 и ws2: <br>
+
 **ws1:** `iperf3 -s -f K` <br>
 <img src="../misc/images/19.jpg" alt="19" /> <br>
 **ws2:** `iperf3 -c 192.168.100.10 -f K` <br>
@@ -223,6 +229,7 @@
 ### 4.1. Утилита iptables
 
 - Создать файл /etc/firewall.sh, имитирующий фаерволл, на ws1 и ws2: <br>
+
 `vim /etc/firewall.sh`
 
 **Нужно добавить в файл подряд следующие правила:** <br>
@@ -233,12 +240,14 @@
 5. разрешить echo reply (машина должна "пинговаться") <br>
 
 - Содержимое файла /etc/firewall для машины ws1 и ws2: <br>
+
 **ws1:** <br>
 <img src="../misc/images/20.jpg" alt="20" /> <br>
 **ws2:** <br>
 <img src="../misc/images/20_1.jpg" alt="20_1" />
 
 - Запустить файлы на обеих машинах: <br>
+
 **ws1:** `chmod +x /etc/firewall.sh` , `/etc/firewall.sh` <br>
 <img src="../misc/images/21.jpg" alt="21" /> <br>
 **ws2:** `chmod +x /etc/firewall.sh` , `/etc/firewall.sh` <br>
