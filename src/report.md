@@ -559,6 +559,10 @@ sudo dhclient enp0s8
 
 > В данном задании используются виртуальные машины из Части 5
 
+- Установить apache2:
+
+`sudo apt-get install apache2` <br>
+
 - В файле `/etc/apache2/ports.conf` на ws22 и r1 изменить строку `Listen 80` на `Listen 0.0.0.0:80`, то есть сделать сервер Apache2 общедоступным:
 
 **r1:** `sudo vim /etc/apache2/ports.conf` <br>
@@ -648,4 +652,74 @@ sudo dhclient enp0s8
 
 > В данном задании используются виртуальные машины из Части 5
 
-- Запустить на r2 фаервол с правилами из Части 7
+- Установить в фаервол на r2 правила из Части 7:
+
+**r2:** `sudo vim /etc/firewall.sh` <br>
+<img src="../misc/images/69.jpg" alt="69" />
+
+- Запустить на r2 фаервол с правилами из Части 7:
+
+**r2:** `sudo chmod +x /etc/firewall.sh` <br>
+        `sudo bash /etc/firewall.sh` <br>
+<img src="../misc/images/70.jpg" alt="70" />
+
+**Запустить веб-сервер Apache на ws22 только на localhost (то есть в файле `/etc/apache2/ports.conf` изменить строку `Listen 80` на `Listen localhost:80`).**
+
+- В файле `/etc/apache2/ports.conf` на r2 изменить строку `Listen 80` на `Listen localhost:80`:
+
+**r2:** `sudo vim /etc/apache2/ports.conf` <br>
+<img src="../misc/images/71.jpg" alt="71" />
+
+- Установить openssh-server:
+
+`sudo apt install openssh-server` <br>
+
+- Внести изменения в `/etc/ssh/sshd_config` на машинах ws11, ws21, ws22:
+
+> 1. Раскомментировать Port 22
+> 2. Раскомментировать ListenAddress 0.0.0.0
+> 3. Раскомментировать ListenAddress ::
+
+**ws11:** `sudo vim /etc/ssh/sshd_config` <br>
+**ws21:** `sudo vim /etc/ssh/sshd_config` <br>
+**ws22:** `sudo vim /etc/ssh/sshd_config` <br>
+<img src="../misc/images/72.jpg" alt="72" />
+
+- Перезапустить sshd: 
+
+`sudo systemctl restart sshd` <br>
+
+- Проверить статус sshd: 
+
+`sudo systemctl status sshd` <br>
+<img src="../misc/images/73.jpg" alt="73" />
+
+**Воспользоваться Local TCP forwarding с ws21 до ws22, чтобы получить доступ к веб-серверу на ws22 с ws21.**
+
+**ws21:** `ssh -L 8080:localhost:80 10.20.0.20` <br>
+<img src="../misc/images/74.jpg" alt="74" />
+
+**Воспользоваться Remote TCP forwarding c ws11 до ws22, чтобы получить доступ к веб-серверу на ws22 с ws11.**
+
+- Внести изменения в правила фаервола r2:
+
+**r2:** `sudo vim /etc/firewall.sh` <br>
+<img src="../misc/images/75.jpg" alt="75" />
+
+`iptables -A FORWARD -p tcp -m multiport --dports 22,80,8080 -j ACCEPT`
+> Это правило позволяет перенаправлять (пропускать) пакеты TCP, направленные на порты 22, 80 и 8080 через таблицу FORWARD для маршрутизации пакетов между разными сетевыми интерфейсами.
+
+`sudo iptables -A FORWARD -p tcp -m multiport --sports 22,80,8080 -j ACCEPT`
+> Это правило позволяет пропустить (разрешить) пакеты TCP, исходящие из системы на порты 22, 80 и 8080 через цепочку FORWARD для маршрутизации пакетов между сетевыми интерфейсами.
+
+- Воспользоваться Remote TCP forwarding:
+
+**ws11:** `ssh -R 8888:10.20.0.20:80 kossadda@10.20.0.20` <br>
+<img src="../misc/images/76.jpg" alt="76" />
+
+**Для проверки, сработало ли подключение в обоих предыдущих пунктах, перейдите во второй терминал (например, клавишами Alt + F2) и выполните команду `telnet 127.0.0.1 [локальный порт]`**
+
+**ws22:** `telnet 127.0.0.1 80` <br>
+<img src="../misc/images/77.jpg" alt="77" />
+
+[**К оглавлению**](#оглавление) <br>
