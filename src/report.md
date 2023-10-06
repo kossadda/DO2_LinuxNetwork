@@ -286,7 +286,7 @@
 **ws2:** `ping 192.168.100.10` <br>
 <img src="../misc/images/22_1.jpg" alt="22_1" />
 
-`nmap -Pn 192.168.100.10` <br>
+**ws2:** `nmap -Pn 192.168.100.10` <br>
 <img src="../misc/images/23.jpg" alt="23" />
 
 ## Part 5. Статическая маршрутизация сети
@@ -310,7 +310,7 @@
 **r1:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/25_4.jpg" alt="25_4" /> <br>
 **r2:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
-<img src="../misc/images/25_5.jpg" alt="25_5" /> <br>
+<img src="../misc/images/25_5.jpg" alt="25_5" />
 
 - Перезапустить сервис сети. Если ошибок нет, то командой `ip -4` a проверить, что адрес машины задан верно:
 
@@ -323,17 +323,17 @@
 **r1:** `ip -4 a` <br>
 <img src="../misc/images/26_4.jpg" alt="26_4" /> <br>
 **r2:** `ip -4 a` <br>
-<img src="../misc/images/26_5.jpg" alt="26_5" /> <br>
+<img src="../misc/images/26_5.jpg" alt="26_5" />
 
 - Пропинговать ws22 с ws21:
 
 **ws21:** `ping 10.20.0.20` <br>
-<img src="../misc/images/27.jpg" alt="27" /> <br>
+<img src="../misc/images/27.jpg" alt="27" />
 
 - Аналогично пропинговать r1 с ws11:
 
 **r1:** `ping 10.10.0.1` <br>
-<img src="../misc/images/28.jpg" alt="28" /> <br>
+<img src="../misc/images/28.jpg" alt="28" />
 
 ### 5.2. Включение переадресации IP-адресов
 
@@ -342,11 +342,12 @@
 **r1:** `sysctl -w net.ipv4.ip_forward=1` <br>
 <img src="../misc/images/29_1.jpg" alt="29_1" /> <br>
 **r2:** `sysctl -w net.ipv4.ip_forward=1` <br>
-<img src="../misc/images/29_2.jpg" alt="29_2" /> <br>
+<img src="../misc/images/29_2.jpg" alt="29_2" />
 
 - Открыть файл `/etc/sysctl.conf` на обоих роутерах и добавить в него следующую строку `net.ipv4.ip_forward = `:
 
-<img src="../misc/images/30.jpg" alt="30" /> <br>
+**r1/r2:** `sudo vim /etc/sysctl.conf` <br>
+<img src="../misc/images/30.jpg" alt="30" />
 
 ### 5.3. Установка маршрута по-умолчанию
 
@@ -359,7 +360,7 @@
 **ws21:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/31_2.jpg" alt="31_2" /> <br>
 **ws22:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
-<img src="../misc/images/31_3.jpg" alt="31_3" /> <br>
+<img src="../misc/images/31_3.jpg" alt="31_3" />
 
 `sudo netplan apply` <br>
 
@@ -370,14 +371,14 @@
 **ws21:** `ip r` <br>
 <img src="../misc/images/32_2.jpg" alt="32_2" /> <br>
 **ws22:** `ip r` <br>
-<img src="../misc/images/32_3.jpg" alt="32_3" /> <br>
+<img src="../misc/images/32_3.jpg" alt="32_3" />
 
 - Пропинговать с ws11 роутер r2 и показать на r2, что пинг доходит. Для этого использовать команду `tcpdump -tn -i eth1`:
 
 **ws11:** `ping -c 5 10.100.0.12` <br>
 <img src="../misc/images/33_1.jpg" alt="33_1" /> <br>
 **ws21:** `sudo tcpdmp -tn -i enp0s8` <br>
-<img src="../misc/images/33_2.jpg" alt="33_2" /> <br>
+<img src="../misc/images/33_2.jpg" alt="33_2" />
 
 ### 5.4. Добавление статических маршрутов
 
@@ -386,7 +387,7 @@
 **r1:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/34_1.jpg" alt="34_1" /> <br>
 **r2:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
-<img src="../misc/images/34_2.jpg" alt="34_2" /> <br>
+<img src="../misc/images/34_2.jpg" alt="34_2" />
 
 `sudo netplan apply` <br>
 
@@ -395,13 +396,13 @@
 **r1:** `ip r` <br>
 <img src="../misc/images/35_1.jpg" alt="35_1" /> <br>
 **r2:** `ip r` <br>
-<img src="../misc/images/35_2.jpg" alt="35_2" /> <br>
+<img src="../misc/images/35_2.jpg" alt="35_2" />
 
 - Запустить команды на ws11 `ip r list 10.10.0.0/[маска сети]` и `ip r list 0.0.0.0/0`:
 
-`ip r list 10.10.0.0/18` <br>
-`ip r list 0.0.0.0/0` <br>
-<img src="../misc/images/36.jpg" alt="36" /> <br>
+**ws11:** `ip r list 10.10.0.0/18` <br>
+          `ip r list 0.0.0.0/0` <br>
+<img src="../misc/images/36.jpg" alt="36" />
 
 > Для адреса 10.10.0.0/18 был выбран маршрут, отличный от 0.0.0.0/0, так как 0.0.0.0/0 будет выбран в том случае, когда другой маршрут не задан в таблице маршрутизации хоста. ws11 находится внутри сети 10.10.0.0/18, и для связи с ней используется IP-адрес 10.10.0.2, поэтому ws11 отправляет данные на роутер, используя маршрут по умолчанию.
 
@@ -409,13 +410,13 @@
 
 - При помощи утилиты traceroute построить список маршрутизаторов на пути от ws11 до ws21:
 
-`traceroute 10.20.0.10` <br>
-<img src="../misc/images/37.jpg" alt="37" /> <br>
+**ws11:** `traceroute 10.20.0.10` <br>
+<img src="../misc/images/37.jpg" alt="37" />
 
 - Запустить на r1 команду дампа:
 
-`tcpdump -tnv -i eth0` <br>
-<img src="../misc/images/38.jpg" alt="38" /> <br>
+**r1:** `tcpdump -tnv -i eth0` <br>
+<img src="../misc/images/38.jpg" alt="38" />
 
 - В отчёте, опираясь на вывод, полученный из дампа на r1, объяснить принцип работы построения пути при помощи traceroute:
 
@@ -431,10 +432,10 @@
 - Запустить на r1 перехват сетевого трафика, проходящего через eth0 с помощью команды:
 - Пропинговать с ws11 несуществующий IP (например, 10.30.0.111) с помощью команды:
 
-`tcpdump -n -i eth0 icmp` <br>
-`ping -c 1 10.30.0.111` <br>
+**r1:** `tcpdump -n -i eth0 icmp` <br>
+**ws11:** `ping -c 1 10.30.0.111` <br>
 <img src="../misc/images/39.jpg" alt="39" /> <br>
-<img src="../misc/images/40.jpg" alt="40" /> <br>
+<img src="../misc/images/40.jpg" alt="40" />
 
 ## Part 6. Динамическая настройка IP с помощью DHCP
 
@@ -447,26 +448,26 @@
 **1) Указать адрес маршрутизатора по-умолчанию, DNS-сервер и адрес внутренней сети:**
 
 **r2:** `sudo vim /etc/dhcp/dhcpd.conf` <br>
-<img src="../misc/images/41.jpg" alt="41" /> <br>
+<img src="../misc/images/41.jpg" alt="41" />
 
 **2) В файле resolv.conf прописать nameserver 8.8.8.8:**
 
 **r2:** `sudo vim /etc/resolv.conf` <br>
-<img src="../misc/images/42.jpg" alt="42" /> <br>
+<img src="../misc/images/42.jpg" alt="42" />
 
 **Перезагрузить службу DHCP командой `systemctl restart isc-dhcp-server`. Машину ws21 перезагрузить при помощи reboot и через `ip a` показать, что она получила адрес. Также пропинговать ws22 с ws21.**
 
 - Перезагрузить службу DHCP командой `systemctl restart isc-dhcp-server`:
 
 **r2:** `systemctl restart isc-dhcp-server` <br>
-<img src="../misc/images/43.jpg" alt="43" /> <br>
+<img src="../misc/images/43.jpg" alt="43" />
 
 - Внести изменения в `/etc/netplan/00-installer-config.yaml` на машинах ws21 и ws22:
 
 **ws21:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
 <img src="../misc/images/44.jpg" alt="44" /> <br>
 **ws22:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
-<img src="../misc/images/45.jpg" alt="45" /> <br>
+<img src="../misc/images/45.jpg" alt="45" />
 
 - Принять изменения:
 
@@ -479,25 +480,25 @@
 - Отобразить получение адреса виртуальной машиной ws21 через `ip a`:
 
 **ws21:** `ip a` <br>
-<img src="../misc/images/46.jpg" alt="46" /> <br>
+<img src="../misc/images/46.jpg" alt="46" />
 
 - Пропинговать ws22 с ws21:
 
 **ws21:** `ping -c 5 10.20.0.20` <br>
-<img src="../misc/images/47.jpg" alt="47" /> <br>
+<img src="../misc/images/47.jpg" alt="47" />
 
 **Указать MAC адрес у ws11, для этого в `etc/netplan/00-installer-config.yaml` надо добавить строки: `macaddress: 10:10:10:10:10:BA, dhcp4: true`**
 
 - Внести изменения в `/etc/netplan/00-installer-config.yaml`:
 
 **ws11:** `sudo vim /etc/netplan/00-installer-config.yaml` <br>
-<img src="../misc/images/48.jpg" alt="48" /> <br>
+<img src="../misc/images/48.jpg" alt="48" />
 
 `sudo netplan apply` <br>
 
 - Отключить машину и прописать изменение MAC адреса в настройках ws11 в VirtualBox:
 
-<img src="../misc/images/49.jpg" alt="49" /> <br>
+<img src="../misc/images/49.jpg" alt="49" />
 
 **Для r1 настроить аналогично r2, но сделать выдачу адресов с жесткой привязкой к MAC-адресу (ws11). Провести аналогичные тесты.**
 
@@ -508,17 +509,17 @@
 **1) Указать адрес маршрутизатора по-умолчанию, DNS-сервер и адрес внутренней сети:**
 
 **r1:** `sudo vim /etc/dhcp/dhcpd.conf` <br>
-<img src="../misc/images/50.jpg" alt="50" /> <br>
+<img src="../misc/images/50.jpg" alt="50" />
 
 **2) В файле resolv.conf прописать nameserver 8.8.8.8:**
 
 **r1:** `sudo vim /etc/resolv.conf` <br>
-<img src="../misc/images/51.jpg" alt="51" /> <br>
+<img src="../misc/images/51.jpg" alt="51" />
 
 - Перезагрузить службу DHCP командой `systemctl restart isc-dhcp-server`:
 
 **r1:** `systemctl restart isc-dhcp-server` <br>
-<img src="../misc/images/52.jpg" alt="52" /> <br>
+<img src="../misc/images/52.jpg" alt="52" />
 
 - Перезагрузить виртуальную машину ws11:
 
@@ -527,26 +528,26 @@
 - Отобразить получение адреса виртуальной машиной ws11 через `ip a`:
 
 **ws11:** `ip a` <br>
-<img src="../misc/images/53.jpg" alt="53" /> <br>
+<img src="../misc/images/53.jpg" alt="53" />
 
 - Пропинговать ws22 с ws21:
 
 **ws11:** `ping -c 5 10.10.0.2` <br>
-<img src="../misc/images/54.jpg" alt="54" /> <br>
+<img src="../misc/images/54.jpg" alt="54" />
 
 **Запросить с ws21 обновление ip адреса.**
 
 - Вывод команды `ip a` до обновления:
 
 **ws21:** `ip a` <br>
-<img src="../misc/images/55_1.jpg" alt="55_1" /> <br>
+<img src="../misc/images/55_1.jpg" alt="55_1" />
 
 - Вывод команды `ip a` после обновления:
 
 **ws21:** `sudo dhclient -r enp0s8` <br>
-`sudo dhclient -r enp0s8` <br>
-`ip a` <br>
-<img src="../misc/images/55_2.jpg" alt="55_2" /> <br>
+          `sudo dhclient -r enp0s8` <br>
+          `ip a` <br>
+<img src="../misc/images/55_2.jpg" alt="55_2" />
 
 - Описать, какими опциями DHCP сервера пользовались в данном пункте:
 
@@ -562,14 +563,14 @@ sudo dhclient enp0s8
 **r1:** `sudo vim /etc/apache2/ports.conf` <br>
 <img src="../misc/images/56_1.jpg" alt="56_1" /> <br>
 **ws22:** `sudo vim /etc/apache2/ports.conf` <br>
-<img src="../misc/images/56_2.jpg" alt="56_2" /> <br>
+<img src="../misc/images/56_2.jpg" alt="56_2" />
 
 - Запустить веб-сервер Apache командой `service apache2 start` на ws22 и r1:
 
 **r1:** `service apache2 start` <br>
 <img src="../misc/images/57_1.jpg" alt="57_1" /> <br>
 **ws22:** `service apache2 start` <br>
-<img src="../misc/images/57_2.jpg" alt="57_2" /> <br>
+<img src="../misc/images/57_2.jpg" alt="57_2" />
 
 **Добавить в фаервол, созданный по аналогии с фаерволом из Части 4, на r2 следующие правила:** <br>
 1. удаление правил в таблице filter - iptables -F <br>
@@ -577,13 +578,13 @@ sudo dhclient enp0s8
 3. отбрасывать все маршрутизируемые пакеты - iptables --policy FORWARD DROP
 
 **r2:** `sudo vim /etc/firewall.sh` <br>
-<img src="../misc/images/58.jpg" alt="58" /> <br>
+<img src="../misc/images/58.jpg" alt="58" />
 
 - Запустить файл также, как в Части 4:
 
 **r2:** `sudo chmod +x /etc/firewall.sh` <br>
 `sudo bash /etc/firewall.sh` <br>
-<img src="../misc/images/59.jpg" alt="59" /> <br>
+<img src="../misc/images/59.jpg" alt="59" />
 
 - Проверить соединение между ws22 и r1 командой ping:
 
@@ -592,4 +593,4 @@ sudo dhclient enp0s8
 **r1:** `ping -c 5 10.20.0.20` <br>
 <img src="../misc/images/60_1.jpg" alt="60_1" /> <br>
 **ws22:** `ping -c 5 10.100.0.11` <br>
-<img src="../misc/images/60_2.jpg" alt="60_2" /> <br>
+<img src="../misc/images/60_2.jpg" alt="60_2" />
