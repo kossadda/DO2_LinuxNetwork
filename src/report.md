@@ -25,7 +25,7 @@
    5.4. [Добавление статических маршрутов](#54-добавление-статических-маршрутов) <br>
    5.5. [Построение списка маршрутизаторов](#55-построение-списка-маршрутизаторов) <br>
    5.6. [Использование протокола ICMP при маршрутизации](#56-использование-протокола-icmp-при-маршрутизации)
-6. [Part 6. Динамическая настройка IP с помощью DHCP](#part-6-динамическая-настройка-ip-с-помощью-dhcp) <br>
+6. [Part 6. Динамическая настройка IP с помощью DHCP](#part-6-динамическая-настройка-ip-с-помощью-dhcp)
 7. [Part 7. NAT](#part-7-nat) <br>
 
 ## Part 1. Инструмент ipcalc
@@ -548,9 +548,48 @@
 `ip a` <br>
 <img src="../misc/images/55_2.jpg" alt="55_2" /> <br>
 
-- В отчёте описать, какими опциями DHCP сервера пользовались в данном пункте:
+- Описать, какими опциями DHCP сервера пользовались в данном пункте:
 
 > sudo dhclient -r enp0s8 (-r необходим для освобождения IP-адреса) <br>
 sudo dhclient enp0s8
 
 ## Part 7. NAT
+
+> В данном задании используются виртуальные машины из Части 5
+
+- В файле `/etc/apache2/ports.conf` на ws22 и r1 изменить строку `Listen 80` на `Listen 0.0.0.0:80`, то есть сделать сервер Apache2 общедоступным:
+
+**r1:** `sudo vim /etc/apache2/ports.conf` <br>
+<img src="../misc/images/56_1.jpg" alt="56_1" /> <br>
+**ws22:** `sudo vim /etc/apache2/ports.conf` <br>
+<img src="../misc/images/56_2.jpg" alt="56_2" /> <br>
+
+- Запустить веб-сервер Apache командой `service apache2 start` на ws22 и r1:
+
+**r1:** `service apache2 start` <br>
+<img src="../misc/images/57_1.jpg" alt="57_1" /> <br>
+**ws22:** `service apache2 start` <br>
+<img src="../misc/images/57_2.jpg" alt="57_2" /> <br>
+
+**Добавить в фаервол, созданный по аналогии с фаерволом из Части 4, на r2 следующие правила:** <br>
+1. удаление правил в таблице filter - iptables -F <br>
+2. удаление правил в таблице "NAT" - iptables -F -t nat <br>
+3. отбрасывать все маршрутизируемые пакеты - iptables --policy FORWARD DROP
+
+**r2:** `sudo vim /etc/firewall.sh` <br>
+<img src="../misc/images/58.jpg" alt="58" /> <br>
+
+- Запустить файл также, как в Части 4:
+
+**r2:** `sudo chmod +x /etc/firewall.sh` <br>
+`sudo bash /etc/firewall.sh` <br>
+<img src="../misc/images/59.jpg" alt="59" /> <br>
+
+- Проверить соединение между ws22 и r1 командой ping:
+
+> При запуске файла с этими правилами, ws22 не должна "пинговаться" с r1
+
+**r1:** `ping -c 5 10.20.0.20` <br>
+<img src="../misc/images/60_1.jpg" alt="60_1" /> <br>
+**ws22:** `ping -c 5 10.100.0.11` <br>
+<img src="../misc/images/60_2.jpg" alt="60_2" /> <br>
