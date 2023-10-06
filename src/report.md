@@ -26,7 +26,8 @@
    5.5. [Построение списка маршрутизаторов](#55-построение-списка-маршрутизаторов) <br>
    5.6. [Использование протокола ICMP при маршрутизации](#56-использование-протокола-icmp-при-маршрутизации)
 6. [Part 6. Динамическая настройка IP с помощью DHCP](#part-6-динамическая-настройка-ip-с-помощью-dhcp)
-7. [Part 7. NAT](#part-7-nat) <br>
+7. [Part 7. NAT](#part-7-nat)
+7. [Part 8. Знакомство с SSH Tunnels](#part-7-nat) <br>
 
 ## Part 1. Инструмент ipcalc
 
@@ -583,7 +584,7 @@ sudo dhclient enp0s8
 - Запустить файл также, как в Части 4:
 
 **r2:** `sudo chmod +x /etc/firewall.sh` <br>
-`sudo bash /etc/firewall.sh` <br>
+         `sudo bash /etc/firewall.sh` <br>
 <img src="../misc/images/59.jpg" alt="59" />
 
 - Проверить соединение между ws22 и r1 командой ping:
@@ -594,3 +595,57 @@ sudo dhclient enp0s8
 <img src="../misc/images/60_1.jpg" alt="60_1" /> <br>
 **ws22:** `ping -c 5 10.100.0.11` <br>
 <img src="../misc/images/60_2.jpg" alt="60_2" />
+
+**Добавить в файл ещё одно правило:** <br>
+4. разрешить маршрутизацию всех пакетов протокола ICMP
+
+**r2:** `sudo vim /etc/firewall.sh` <br>
+<img src="../misc/images/61.jpg" alt="61" />
+
+- Запустить файл также, как в Части 4:
+
+**r2:** `sudo chmod +x /etc/firewall.sh` <br>
+        `sudo bash /etc/firewall.sh` <br>
+<img src="../misc/images/62.jpg" alt="62" />
+
+- Проверить соединение между ws22 и r1 командой ping:
+
+> При запуске файла с этими правилами, ws22 должна "пинговаться" с r1
+
+**r1:** `ping -c 5 10.20.0.20` <br>
+<img src="../misc/images/63_1.jpg" alt="63_1" /> <br>
+**ws22:** `ping -c 5 10.100.0.11` <br>
+<img src="../misc/images/63_2.jpg" alt="63_2" />
+
+**Добавить в файл ещё два правила:** <br>
+5. включить SNAT, а именно маскирование всех локальных ip из локальной сети, находящейся за r2 (по обозначениям из Части 5 - сеть 10.20.0.0) <br>
+6. включить DNAT на 8080 порт машины r2 и добавить к веб-серверу Apache, запущенному на ws22, доступ извне сети
+
+**r2:** `sudo vim /etc/firewall.sh` <br>
+<img src="../misc/images/64.jpg" alt="64" />
+
+- Запустить файл также, как в Части 4:
+
+> Перед тестированием рекомендуется отключить сетевой интерфейс NAT (его наличие можно проверить командой `ip a`) в VirtualBox, если он включен.
+
+**r2:** `sudo chmod +x /etc/firewall.sh` <br>
+        `sudo bash /etc/firewall.sh` <br>
+<img src="../misc/images/65.jpg" alt="65" />
+
+- Проверить соединение по TCP для SNAT, для этого с ws22 подключиться к серверу Apache на r1 командой `telnet [адрес] [порт]`:
+
+**ws22:** `sudo telnet 10.100.0.11 80` <br>
+<img src="../misc/images/66.jpg" alt="66" /> <br>
+**r1:** `sudo tcpdump -i enp0s9 -n` <br>
+<img src="../misc/images/67.jpg" alt="67" />
+
+- Проверить соединение по TCP для DNAT, для этого с r1 подключиться к серверу Apache на ws22 командой `telnet` (обращаться по адресу r2 и порту 8080):
+
+**r1:** `sudo telnet 10.100.0.12 8080` <br>
+<img src="../misc/images/68.jpg" alt="68" />
+
+## Part 8. Знакомство с SSH Tunnels
+
+> В данном задании используются виртуальные машины из Части 5
+
+- Запустить на r2 фаервол с правилами из Части 7
